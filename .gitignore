@@ -1,0 +1,20 @@
+# Ignorar arquivos de dependência do Bundler
+/.bundle
+/vendor/bundle/
+
+# Ignorar arquivos de log e temporários
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignorar arquivos de banco de dados locais (boa prática)
+db/*.sqlite3
+db/*.sqlite3-journal
+
+# Ignorar arquivos de cobertura de teste
+/coverage/
+
+# Ignorar arquivos específicos do sistema operacional
+.DS_Store
+Thumbs.db
