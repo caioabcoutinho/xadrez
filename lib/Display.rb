@@ -1,19 +1,41 @@
-# Uso de Unicode e Cores:
+# /xadrez/lib/Display.rb
+require 'colorize'
 
-# Para uma representação visual mais rica, usaremos caracteres Unicode para as peças de xadrez
-# (por exemplo, '♜' para a Torre e '♞' para o Cavalo).
-# Para tornar o tabuleiro mais legível e esteticamente agradável,
-# usaremos uma gem como a colorize para adicionar cores de fundo às casas,
-# alternando entre duas cores para simular um tabuleiro de xadrez real.
-# Embora seja possível fazer isso com sequências de escape ANSI brutas,
-# uma gem simplifica muito o processo. O resultado será uma string formatada que imprimiremos no console a cada turno.
+class Display
+  def initialize(board, cursor)
+    @board = board
+    @cursor = cursor
+  end
 
-# O design que estamos construindo demonstra um princípio poderoso da POO: a abstração.
-# A classe Board não precisa conhecer as regras específicas de como uma Rook ou um Knight se movem.
-# Ela só precisa saber que está lidando com objetos do tipo Piece que respondem a um método #moves.
-# Essa separação de responsabilidades, ou desacoplamento, é um objetivo fundamental de um bom design orientado a objetos.
-# Uma abordagem ingênua poderia colocar toda a lógica de movimento dentro de um grande case na classe Board, tornando-a frágil e difícil de manter.
-# Ao delegar a responsabilidade do movimento para as próprias peças, criamos um sistema flexível.
-# Se quiséssemos adicionar uma nova peça exótica, como um "Chanceler",
-# precisaríamos apenas criar uma nova classe Chancellor < Piece e implementar seu método #moves, sem alterar a classe Board.
-# Isso ilustra como a abstração e o polimorfismo levam a um software mais extensível e de fácil manutenção.
+  def render
+    system('clear') || system('cls')
+    puts "Use WASD para se mover. Enter/Espaço para selecionar."
+    # LINHA ALTERADA: Adicionamos mais espaços para alinhar com as casas de 3 caracteres
+    puts "   a  b  c  d  e  f  g  h"
+    @board.grid.each_with_index do |row, i|
+      print "#{8 - i} "
+      row.each_with_index do |piece, j|
+        bg_color = determine_bg_color([i, j])
+        # A lógica da peça agora virá do próprio objeto da peça
+        symbol = piece.nil? ? "   " : " #{piece.symbol} " # Adicionamos espaços em volta do símbolo
+
+        print symbol.colorize(background: bg_color)
+      end
+      puts " #{8 - i}"
+    end
+    # LINHA ALTERADA: Adicionamos mais espaços aqui também
+    puts "   a  b  c  d  e  f  g  h"
+  end
+
+  private
+
+  def determine_bg_color(pos)
+    if @cursor.cursor_pos == pos
+      @cursor.selected ? :light_green : :light_yellow
+    elsif (pos[0] + pos[1]).even?
+      :light_blue # Casa clara
+    else
+      :dark_blue # Casa escura (mudei para um azul mais escuro para melhor contraste)
+    end
+  end
+end
